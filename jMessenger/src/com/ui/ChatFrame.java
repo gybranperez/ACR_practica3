@@ -24,7 +24,7 @@ public class ChatFrame extends javax.swing.JFrame {
     public DefaultListModel model;
     public File file;
     public String historyFile = "D:/History.xml";
-    public HashMap<String,JTextArea> map = new HashMap<String, JTextArea>();
+    public HashMap<String,ChatFrameNoSocket> map = new HashMap<String, ChatFrameNoSocket>();
     public ChatFrame() {
         initComponents();
         this.setTitle("Cliente Watts up");
@@ -84,8 +84,10 @@ public class ChatFrame extends javax.swing.JFrame {
         jTextField1.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         jTextField1.setText("10.31.111.52");
 
-        jButton1.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
-        jButton1.setText("Connect");
+        jButton1.setBackground(new java.awt.Color(40, 40, 45));
+        jButton1.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        jButton1.setForeground(new java.awt.Color(250, 250, 250));
+        jButton1.setText("Conectar");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -109,7 +111,7 @@ public class ChatFrame extends javax.swing.JFrame {
         jTextArea1.setColumns(20);
         jTextArea1.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         jTextArea1.setRows(5);
-        jTextArea1.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        jTextArea1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jTextArea1.setFocusable(false);
         jTextArea1.setSelectionColor(new java.awt.Color(1, 89, 158));
         jScrollPane1.setViewportView(jTextArea1);
@@ -198,8 +200,8 @@ public class ChatFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(12, 12, 12)
                 .addComponent(jLabel2)
-                .addGap(88, 88, 88)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(73, 73, 73)
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createSequentialGroup()
                 .addGap(10, 10, 10)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -268,10 +270,10 @@ public class ChatFrame extends javax.swing.JFrame {
         serverAddr = jTextField1.getText(); 
         if(!serverAddr.isEmpty() ){
             try{
-                client = new SocketClient(this);
-                clientThread = new Thread(client);
-                clientThread.start();
-                client.send(new Message("test", "testUser", "testContent", "SERVER"));
+                this.client = new SocketClient(this);
+                this.clientThread = new Thread(client);
+                this.clientThread.start();
+                this.client.send(new Message("test", "testUser", "testContent", "SERVER"));
             }
             catch(Exception ex){
                 jTextArea1.append("[Boom.. > Me] : Server not found\n");
@@ -280,7 +282,7 @@ public class ChatFrame extends javax.swing.JFrame {
         username = jTextField3.getText();
         password = "kk";
         if(!username.isEmpty() && !password.isEmpty()){
-            client.send(new Message("signup", username, password, "SERVER"));
+            this.client.send(new Message("signup", username, password, "SERVER"));
         }
     }//GEN-LAST:event_jButton1ActionPerformed
         
@@ -356,7 +358,7 @@ public class ChatFrame extends javax.swing.JFrame {
         String actual = jList1.getSelectedValue().toString();
         if(!map.containsKey(actual)){
             ChatFrameNoSocket chatFrameNoSocket = new ChatFrameNoSocket(jTextField3.getText(), actual, client);
-            map.put(actual, chatFrameNoSocket.jTextArea1);
+            map.put(actual, chatFrameNoSocket);
         }
     }//GEN-LAST:event_ventanaOpenerActionPerformed
 

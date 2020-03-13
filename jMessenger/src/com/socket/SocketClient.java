@@ -41,19 +41,23 @@ public class SocketClient implements Runnable{
             try {
                 Message msg = (Message) In.readObject();
                 if(msg.type.equals("message")){
+                    
                     if(msg.recipient.equals("All")){
-                        ui.map.get("All").append(msg.sender+": "+msg.content+"\n");
+                        ui.map.get("All").jTextArea1.append(msg.sender+": "+msg.content+"\n");
                         System.out.println("ALL : "+msg.toString());
                     }else{
                         if(!ui.map.containsKey(msg.sender) && !msg.sender.equals(ui.username)){
                             ChatFrameNoSocket chatFrameNoSocket = new ChatFrameNoSocket(ui.username,msg.sender, this);
-                            ui.map.put(msg.sender, chatFrameNoSocket.jTextArea1);
-                            ui.map.get(msg.sender).append(msg.content+"\n");
+                            ui.map.put(msg.sender, chatFrameNoSocket);
+                            ui.map.get(msg.sender).jTextArea1.append(msg.content+"\n");
                         }else{
-                            if(msg.sender.equals(ui.username)){
-                                ui.map.get(msg.recipient).append("Yo: "+msg.content+"\n");
+                            if(msg.content.equals(".cerrarConversacion")){
+                                JOptionPane.showMessageDialog(null, msg.recipient + " cerro el chat contigo", "Aviso", JOptionPane.WARNING_MESSAGE);
+
+                            }else if(msg.sender.equals(ui.username)){
+                                ui.map.get(msg.recipient).jTextArea1.append("Yo: "+msg.content+"\n");
                             }else{
-                                ui.map.get(msg.sender).append(msg.content+"\n");
+                                ui.map.get(msg.sender).jTextArea1.append(msg.content+"\n");
                             }
                         }
                     }
