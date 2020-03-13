@@ -113,7 +113,7 @@ public class SocketClient implements Runnable{
                     }
                 }
                 else if(msg.type.equals("upload_req")){
-                    if(JOptionPane.showConfirmDialog(ui, ("Accept '"+msg.content+"' from "+msg.sender+" ?")) == 0){
+                    if(JOptionPane.showConfirmDialog(ui, ("Aceptar el archivo '"+msg.content+"' de "+msg.sender+" ?")) == 0){
                         JFileChooser jf = new JFileChooser();
                         jf.setSelectedFile(new File(msg.content));
                         int returnVal = jf.showSaveDialog(ui);
@@ -138,9 +138,10 @@ public class SocketClient implements Runnable{
                     if(!msg.content.equals("NO")){
                         int kkk  = Integer.parseInt(msg.content);
                         String addr = msg.sender;
-                        
+                        String filename = ui.getFileName();
+                        JOptionPane.showMessageDialog(null, "SocketClient enviado: " + filename);
                         ui.jButton5.setEnabled(false); ui.jButton6.setEnabled(false);
-                        Upload upl = new Upload(addr, kkk, ui.file, ui);
+                        Upload upl = new Upload(addr, this.port, new File(filename), ui);
                         Thread t = new Thread(upl);
                         t.start();
                     }
@@ -206,7 +207,7 @@ public class SocketClient implements Runnable{
                 
                 ui.clientThread.stop();
                 
-                System.out.println("Exception SocketClient run()");
+                System.out.println("Exception en el metodo run() de SocketClient ");
                 ex.printStackTrace();
             }
         }
@@ -216,7 +217,7 @@ public class SocketClient implements Runnable{
         try {
             Out.writeObject(msg);
             Out.flush();
-            System.out.println("Outgoing : "+msg.toString());
+            System.out.println("Salida : "+msg.toString());
             if(msg.type.equals("message") && !msg.content.equals(".bye")){
                 String msgTime = (new Date()).toString();
             }

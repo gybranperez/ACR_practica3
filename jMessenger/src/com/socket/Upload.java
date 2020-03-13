@@ -1,3 +1,8 @@
+/*
+CLASE PARA SUBIR ARCHIVOS
+edit: gybranperez
+
+*/
 package com.socket;
 
 import com.ui.ChatFrame;

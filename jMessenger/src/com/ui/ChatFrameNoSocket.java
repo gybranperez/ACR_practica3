@@ -20,19 +20,38 @@ public class ChatFrameNoSocket extends javax.swing.JFrame {
     private SocketClient client;
     private String username="";
     private String destname="";
-
+    private String filename="";
     public ChatFrameNoSocket(String user,String dest, SocketClient cli) {
         initComponents();
-        this.setTitle("Boom Messenger 1.0");
         username=user;
         destname=dest;
+        this.setTitle(username + " > " + destname);
         eluser.setText(dest);
         client=cli;
         this.setVisible(true);
         this.addWindowListener(new WindowListener() {
             @Override public void windowOpened(WindowEvent e) {}
-            @Override public void windowClosing(WindowEvent e) { try{ client.send(new Message("message", username, ".bye", "SERVER")); clientThread.stop();  }catch(Exception ex){} }
-            @Override public void windowClosed(WindowEvent e) { try{ client.send(new Message("message", username, ".bye", "SERVER")); clientThread.stop();  }catch(Exception ex){} }
+            //@Override public void windowClosing(WindowEvent e) { try{ client.send(new Message("message", username, ".bye", "SERVER")); clientThread.stop();  }catch(Exception ex){} }
+            @Override public void windowClosed(WindowEvent e) { try{ client.send(new Message("message", username, ".bye", "SERVER")); 
+            //clientThread.stop();  
+                }catch(Exception ex){} }
+             @Override public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                 if (JOptionPane.showConfirmDialog(null,
+                        "Quieres cerrar el chat con "+ destname, 
+                        "Cerrar chat?", 
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){{
+                           try{ 
+                               client.send(
+                                    new Message("message", username, 
+                                                ".cerrarConversacion", destname)
+                               ); 
+                                //clientThread.stop();  
+                            }catch(Exception ex){} }
+                        setVisible(false);
+                            
+                }
+            }
             @Override public void windowIconified(WindowEvent e) {}
             @Override public void windowDeiconified(WindowEvent e) {}
             @Override public void windowActivated(WindowEvent e) {}
@@ -200,11 +219,13 @@ public class ChatFrameNoSocket extends javax.swing.JFrame {
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.showDialog(this, "Select File");
-        file = fileChooser.getSelectedFile();
-        if(file != null){
-            if(!file.getName().isEmpty()){
+        this.file = fileChooser.getSelectedFile();
+        if(this.file != null){
+            if(!this.file.getName().isEmpty()){
                 jButton6.setEnabled(true); String str;
-                    str = file.getPath();
+                    str = this.file.getPath();
+                    this.filename = str;
+                    JOptionPane.showMessageDialog(null, "jButton5ActionPerformed enviado: " + String.valueOf(this.file.getName()));                    
                 jButton5.setText(str);
             }
         }
@@ -235,9 +256,11 @@ public class ChatFrameNoSocket extends javax.swing.JFrame {
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         long size = file.length();
         if(size < 120 * 1024 * 1024){
-            client.send(new Message("upload_req", username, file.getName(), destname));
+            JOptionPane.showMessageDialog(null, "jButton6ActionPerformed enviado: " + String.valueOf(this.file.getName()));
+            client.send(new Message("upload_req", username, this.file.getName(), destname));
         }
         else{
+                            JOptionPane.showMessageDialog(null, "El archivo es muy grande para ser enviado", "Error", JOptionPane.ERROR_MESSAGE);
             jTextArea1.append("[Boom.. > Me] : File is size too large\n");
         }
     }//GEN-LAST:event_jButton6ActionPerformed

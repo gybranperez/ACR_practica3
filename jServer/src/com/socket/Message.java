@@ -1,3 +1,8 @@
+/*
+CLASE PARA SUBIR ARCHIVOS
+edit: gybranperez
+
+*/
 package com.socket;
 
 import java.io.Serializable;
@@ -13,7 +18,7 @@ public class Message implements Serializable{
     
     @Override
     public String toString(){
-        return "{type='"+type+"', sender='"+sender+"', content='"+content+"', recipient='"+recipient+"'}";
+        return "{tipo='"+type+"', Emisor='"+sender+"', contenido='"+content+"', Receptor='"+recipient+"'}";
     }
 
     public int getChId() {

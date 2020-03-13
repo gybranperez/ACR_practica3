@@ -16,7 +16,7 @@ import javax.swing.JTextArea;
 import javax.swing.UIManager;
 
 public class ChatFrame extends javax.swing.JFrame {
-
+    private String fileName;
     public SocketClient client;
     public int port=13440;
     public String serverAddr, username, password;
@@ -27,7 +27,7 @@ public class ChatFrame extends javax.swing.JFrame {
     public HashMap<String,JTextArea> map = new HashMap<String, JTextArea>();
     public ChatFrame() {
         initComponents();
-        this.setTitle("Boom Messenger 1.0");
+        this.setTitle("Cliente Watts up");
         jList1.setSelectedIndex(0);
         this.addWindowListener(new WindowListener() {
             @Override public void windowOpened(WindowEvent e) {}
@@ -43,7 +43,10 @@ public class ChatFrame extends javax.swing.JFrame {
     public boolean isWin32(){
         return System.getProperty("os.name").startsWith("Windows");
     }
-
+    
+    public String getFileName(){
+        return this.fileName;
+    }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -284,11 +287,13 @@ public class ChatFrame extends javax.swing.JFrame {
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.showDialog(this, "Select File");
-        file = fileChooser.getSelectedFile();
-        if(file != null){
-            if(!file.getName().isEmpty()){
+        this.file = fileChooser.getSelectedFile();
+        if(this.file != null){
+            if(!this.file.getName().isEmpty()){
                 jButton6.setEnabled(true); String str;
-                    str = file.getPath();
+                    str = this.file.getPath();
+                    this.fileName = str;
+                    JOptionPane.showMessageDialog(null, "jButton5ActionPerformed enviado: " + String.valueOf(this.file.getName()));
                 jButton5.setText(str);
             }
         }
@@ -297,10 +302,14 @@ public class ChatFrame extends javax.swing.JFrame {
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
             long size = file.length();
             if(size < 120 * 1024 * 1024){
-                client.send(new Message("upload_req", username, file.getName(), jList1.getSelectedValue().toString()));
+                
+                System.out.println("file.getName: " + this.file.getName() + "\t this.fileName: " + this.fileName);
+                client.send(new Message("upload_req", username, this.fileName, jList1.getSelectedValue().toString()));
+                
             }
             else{
-                jTextArea1.append("[Boom.. > Me] : File is size too large\n");
+                JOptionPane.showMessageDialog(null, "El archivo es muy grande para ser enviado", "Error", JOptionPane.ERROR_MESSAGE);
+                //jTextArea1.append("[Boom.. > Me] : File is size too large\n");
             }
     }//GEN-LAST:event_jButton6ActionPerformed
 
