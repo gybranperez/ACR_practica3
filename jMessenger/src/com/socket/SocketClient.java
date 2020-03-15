@@ -24,6 +24,7 @@ public class SocketClient implements Runnable{
     public String serverAddr;
     public Socket socket;
     public ChatFrame ui;
+    public String pat="";
     public ObjectInputStream In;
     public ObjectOutputStream Out;
     public SocketClient(ChatFrame frame) throws IOException{
@@ -36,28 +37,26 @@ public class SocketClient implements Runnable{
     
     @Override
     public void run() {
+        pat = ui.pathy;
+        System.out.println("Pathsckcli1 : " + pat);
         boolean keepRunning = true;
         while(keepRunning){
             try {
                 Message msg = (Message) In.readObject();
                 if(msg.type.equals("message")){
-                    
                     if(msg.recipient.equals("All")){
-                        ui.map.get("All").jTextArea1.append(msg.sender+": "+msg.content+"\n");
+                        ui.map.get("All").append(msg.sender+": "+msg.content+"\n");
                         System.out.println("ALL : "+msg.toString());
                     }else{
                         if(!ui.map.containsKey(msg.sender) && !msg.sender.equals(ui.username)){
                             ChatFrameNoSocket chatFrameNoSocket = new ChatFrameNoSocket(ui.username,msg.sender, this);
-                            ui.map.put(msg.sender, chatFrameNoSocket);
-                            ui.map.get(msg.sender).jTextArea1.append(msg.content+"\n");
+                            ui.map.put(msg.sender, chatFrameNoSocket.jTextArea1);
+                            ui.map.get(msg.sender).append(msg.content+"\n");
                         }else{
-                            if(msg.content.equals(".cerrarConversacion")){
-                                JOptionPane.showMessageDialog(null, msg.recipient + " cerro el chat contigo", "Aviso", JOptionPane.WARNING_MESSAGE);
-
-                            }else if(msg.sender.equals(ui.username)){
-                                ui.map.get(msg.recipient).jTextArea1.append("Yo: "+msg.content+"\n");
+                            if(msg.sender.equals(ui.username)){
+                                ui.map.get(msg.recipient).append("Yo: "+msg.content+"\n");
                             }else{
-                                ui.map.get(msg.sender).jTextArea1.append(msg.content+"\n");
+                                ui.map.get(msg.sender).append( msg.content+"\n");
                             }
                         }
                     }
@@ -117,7 +116,7 @@ public class SocketClient implements Runnable{
                     }
                 }
                 else if(msg.type.equals("upload_req")){
-                    if(JOptionPane.showConfirmDialog(ui, ("Aceptar el archivo '"+msg.content+"' de "+msg.sender+" ?")) == 0){
+                    if(JOptionPane.showConfirmDialog(ui, ("Accept '"+msg.content+"' from "+msg.sender+" ?")) == 0){
                         JFileChooser jf = new JFileChooser();
                         jf.setSelectedFile(new File(msg.content));
                         int returnVal = jf.showSaveDialog(ui);
@@ -142,10 +141,9 @@ public class SocketClient implements Runnable{
                     if(!msg.content.equals("NO")){
                         int kkk  = Integer.parseInt(msg.content);
                         String addr = msg.sender;
-                        String filename = ui.getFileName();
-                        JOptionPane.showMessageDialog(null, "SocketClient enviado: " + filename);
                         ui.jButton5.setEnabled(false); ui.jButton6.setEnabled(false);
-                        Upload upl = new Upload(addr, this.port, new File(filename), ui);
+                        System.out.println("Pathsckcli : " + pat);
+                        Upload upl = new Upload(addr, kkk, pat, ui);
                         Thread t = new Thread(upl);
                         t.start();
                     }
@@ -211,7 +209,7 @@ public class SocketClient implements Runnable{
                 
                 ui.clientThread.stop();
                 
-                System.out.println("Exception en el metodo run() de SocketClient ");
+                System.out.println("Exception SocketClient run()");
                 ex.printStackTrace();
             }
         }
@@ -221,7 +219,7 @@ public class SocketClient implements Runnable{
         try {
             Out.writeObject(msg);
             Out.flush();
-            System.out.println("Salida : "+msg.toString());
+            System.out.println("Outgoing : "+msg.toString());
             if(msg.type.equals("message") && !msg.content.equals(".bye")){
                 String msgTime = (new Date()).toString();
             }

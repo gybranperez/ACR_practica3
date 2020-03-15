@@ -6,7 +6,7 @@ public class Message implements Serializable{
     private long chId;
     private long timestamp, 
             ttl=2000; 
-    private Object data; //puede ser cualquier tipo de archivo
+    private Object data; //can carry any type of object. in this program, i used a sound packet, but it could be a string, a chunk of video, ...
 
     
     private static final long serialVersionUID = 1L;
@@ -18,7 +18,7 @@ public class Message implements Serializable{
     
     @Override
     public String toString(){
-        return "{tipo:'"+type+"', Emisor='"+sender+"', contenido='"+content+"', Receptor='"+recipient+"'}";
+        return "{type='"+type+"', sender='"+sender+"', content='"+content+"', recipient='"+recipient+"'}";
     }
      public Message(long chId, long timestamp, Object data) {
         this.chId = chId;

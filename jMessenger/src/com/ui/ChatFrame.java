@@ -16,7 +16,7 @@ import javax.swing.JTextArea;
 import javax.swing.UIManager;
 
 public class ChatFrame extends javax.swing.JFrame {
-    private String fileName;
+
     public SocketClient client;
     public int port=13440;
     public String serverAddr, username, password;
@@ -24,10 +24,11 @@ public class ChatFrame extends javax.swing.JFrame {
     public DefaultListModel model;
     public File file;
     public String historyFile = "D:/History.xml";
-    public HashMap<String,ChatFrameNoSocket> map = new HashMap<String, ChatFrameNoSocket>();
+    public HashMap<String,JTextArea> map = new HashMap<String, JTextArea>();
+    public String pathy="";
     public ChatFrame() {
         initComponents();
-        this.setTitle("Cliente Watts up");
+        this.setTitle("Boom Messenger 1.0");
         jList1.setSelectedIndex(0);
         this.addWindowListener(new WindowListener() {
             @Override public void windowOpened(WindowEvent e) {}
@@ -43,10 +44,7 @@ public class ChatFrame extends javax.swing.JFrame {
     public boolean isWin32(){
         return System.getProperty("os.name").startsWith("Windows");
     }
-    
-    public String getFileName(){
-        return this.fileName;
-    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -82,12 +80,10 @@ public class ChatFrame extends javax.swing.JFrame {
         jLabel1.setText("Host IP : ");
 
         jTextField1.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
-        jTextField1.setText("10.31.111.52");
+        jTextField1.setText("192.168.100.81");
 
-        jButton1.setBackground(new java.awt.Color(40, 40, 45));
-        jButton1.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
-        jButton1.setForeground(new java.awt.Color(250, 250, 250));
-        jButton1.setText("Conectar");
+        jButton1.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        jButton1.setText("Connect");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -200,8 +196,8 @@ public class ChatFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(12, 12, 12)
                 .addComponent(jLabel2)
-                .addGap(73, 73, 73)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(88, 88, 88)
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createSequentialGroup()
                 .addGap(10, 10, 10)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -270,10 +266,10 @@ public class ChatFrame extends javax.swing.JFrame {
         serverAddr = jTextField1.getText(); 
         if(!serverAddr.isEmpty() ){
             try{
-                this.client = new SocketClient(this);
-                this.clientThread = new Thread(client);
-                this.clientThread.start();
-                this.client.send(new Message("test", "testUser", "testContent", "SERVER"));
+                client = new SocketClient(this);
+                clientThread = new Thread(client);
+                clientThread.start();
+                client.send(new Message("test", "testUser", "testContent", "SERVER"));
             }
             catch(Exception ex){
                 jTextArea1.append("[Boom.. > Me] : Server not found\n");
@@ -282,20 +278,19 @@ public class ChatFrame extends javax.swing.JFrame {
         username = jTextField3.getText();
         password = "kk";
         if(!username.isEmpty() && !password.isEmpty()){
-            this.client.send(new Message("signup", username, password, "SERVER"));
+            client.send(new Message("signup", username, password, "SERVER"));
         }
     }//GEN-LAST:event_jButton1ActionPerformed
         
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.showDialog(this, "Select File");
-        this.file = fileChooser.getSelectedFile();
-        if(this.file != null){
-            if(!this.file.getName().isEmpty()){
+        file = fileChooser.getSelectedFile();
+        pathy = file.getAbsolutePath();
+        if(file != null){
+            if(!file.getName().isEmpty()){
                 jButton6.setEnabled(true); String str;
-                    str = this.file.getPath();
-                    this.fileName = str;
-                    JOptionPane.showMessageDialog(null, "jButton5ActionPerformed enviado: " + String.valueOf(this.file.getName()));
+                    str = file.getPath();
                 jButton5.setText(str);
             }
         }
@@ -304,14 +299,10 @@ public class ChatFrame extends javax.swing.JFrame {
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
             long size = file.length();
             if(size < 120 * 1024 * 1024){
-                
-                System.out.println("file.getName: " + this.file.getName() + "\t this.fileName: " + this.fileName);
-                client.send(new Message("upload_req", username, this.fileName, jList1.getSelectedValue().toString()));
-                
+                client.send(new Message("upload_req", username, file.getName(), jList1.getSelectedValue().toString()));
             }
             else{
-                JOptionPane.showMessageDialog(null, "El archivo es muy grande para ser enviado", "Error", JOptionPane.ERROR_MESSAGE);
-                //jTextArea1.append("[Boom.. > Me] : File is size too large\n");
+                jTextArea1.append("[Boom.. > Me] : File is size too large\n");
             }
     }//GEN-LAST:event_jButton6ActionPerformed
 
@@ -358,7 +349,7 @@ public class ChatFrame extends javax.swing.JFrame {
         String actual = jList1.getSelectedValue().toString();
         if(!map.containsKey(actual)){
             ChatFrameNoSocket chatFrameNoSocket = new ChatFrameNoSocket(jTextField3.getText(), actual, client);
-            map.put(actual, chatFrameNoSocket);
+            map.put(actual, chatFrameNoSocket.jTextArea1);
         }
     }//GEN-LAST:event_ventanaOpenerActionPerformed
 

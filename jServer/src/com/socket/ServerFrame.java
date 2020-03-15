@@ -1,9 +1,3 @@
-/*
-CLASE PARA MOSTRAR JFRAME PARA ARRANCAR EL SERVIDOR
-
-edit: gybranperez
-
-*/
 package com.socket;
 
 import java.awt.Color;
@@ -14,27 +8,21 @@ import javax.swing.JFileChooser;
 import javax.swing.UIManager;
 
 public class ServerFrame extends javax.swing.JFrame {
-    // Descriptor de socket del servidor
-    public SocketServer server;
-    // Hilo para el servidor
-    public Thread serverThread;
-    // Acceso a datos necesarios
-    public String filePath = "D:/Data.xml";
-    // Frame que utilizamos para pedir el archivo a subir
-    public JFileChooser fileChooser;
 
+    public SocketServer server;
+    public Thread serverThread;
+    public String filePath = "D:/Data.xml";
+    public JFileChooser fileChooser;
+    
     public ServerFrame() {
-        //Inicializa los elementos de la ventana y la misma
-        initComponents();
-        //Asignamos el titulo a la ventana
-        this.setTitle("ACR Practica 3 - Servidor Watts up");
-        //Inicializamos el selector de archivos
+        initComponents();     
+       
+        
         fileChooser = new JFileChooser();
-        //Este textArea reportara quien se conecte al server y quien sale
         jTextArea1.setEditable(false);
     }
-
-    public boolean isWin32() {
+    
+    public boolean isWin32(){
         return System.getProperty("os.name").startsWith("Windows");
     }
 
@@ -55,7 +43,7 @@ public class ServerFrame extends javax.swing.JFrame {
             }
         });
 
-        jButton1.setText("Arrancar servidor");
+        jButton1.setText("Start Server");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -79,7 +67,7 @@ public class ServerFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(207, 207, 207)
                 .addComponent(jButton1)
-                .addContainerGap(177, Short.MAX_VALUE))
+                .addContainerGap(214, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -96,32 +84,31 @@ public class ServerFrame extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         server = new SocketServer(this);
-        jButton1.setEnabled(false);
+       jButton1.setEnabled(false);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
-        int key = evt.getKeyCode();
-        if (key == KeyEvent.VK_ENTER) {
-            server = new SocketServer(this);
-            jButton1.setEnabled(false);
-        }        // TODO add your handling code here:
+            int key = evt.getKeyCode();
+              if (key == KeyEvent.VK_ENTER) {
+              server = new SocketServer(this);
+                 jButton1.setEnabled(false);
+              }        // TODO add your handling code here:
     }//GEN-LAST:event_formKeyPressed
 
-    public void RetryStart(int port) {
-        if (server != null) {
-            server.stop();
-        }
+    public void RetryStart(int port){
+        if(server != null){ server.stop(); }
         server = new SocketServer(this, port);
     }
-
+    
     public static void main(String args[]) {
 
-        try {
+        try{
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception ex) {
+        }
+        catch(Exception ex){
             System.out.println("Look & Feel Exception");
         }
-
+        
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new ServerFrame().setVisible(true);
